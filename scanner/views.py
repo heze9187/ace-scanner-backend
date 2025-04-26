@@ -1,6 +1,8 @@
 # scanner/views.py
 from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from django.views.decorators.csrf import csrf_protect
 from rest_framework.response import Response
 from .models import User, Court, UserPreference, CourtAvailability
 from .serializer import CourtSerializer, UserPreferenceSerializer, CourtAvailabilitySerializer
@@ -63,27 +65,26 @@ class ScrapeAvailabilityViewSet(viewsets.ViewSet):
         call_command('scrape_availability')
         return Response({'message': 'Scraping started successfully'})
 
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_protect
 def api_login(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        username = data.get('username')
-        password = data.get('password')
-        user = authenticate(username=username, password=password)
-        if user:
-            login(request, user)
-            return JsonResponse({'message': 'Login success'})
-        else:
-            return JsonResponse({'message': 'Invalid credentials'}, status=400)
-    return JsonResponse({'message': 'Method not allowed'}, status=405)
+    data = request.data
+    username = data.get('username')
+    password = data.get('password')
+    user = authenticate(username=username, password=password)
+    if user:
+        login(request, user)
+        return JsonResponse({'message': 'Login success'})
+    else:
+        return JsonResponse({'message': 'Invalid credentials'}, status=400)
 
-
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_protect
 def api_logout(request):
-    if request.method == 'POST':
-        logout(request)
-        return JsonResponse({'message': 'Logout success'})
-    return JsonResponse({'message': 'Method not allowed'}, status=405)
+    logout(request)
+    return JsonResponse({'message': 'Logout success'})
 
 def get_csrf_token(request):
     csrf_token = get_token(request)
