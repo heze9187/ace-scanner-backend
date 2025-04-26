@@ -60,9 +60,18 @@ def api_logout(request):
     logout(request)
     return JsonResponse({'message': 'Logout success'})
 
-@ensure_csrf_cookie
 def get_csrf_token(request):
-    return JsonResponse({'message': 'CSRF cookie set'})
+    csrf_token = get_token(request)  # <-- generate a fresh CSRF token
+    response = JsonResponse({'message': 'CSRF cookie set'})
+    response.set_cookie(
+        key='csrftoken',
+        value=csrf_token,
+        secure=True,         # True in production (https)
+        httponly=False,       # IMPORTANT! Allow frontend JS to read it
+        samesite='None',      # IMPORTANT! Allow cross-site if frontend is on different domain
+        path='/',
+    )
+    return response
 
 def csrf_failure(request, reason=""):
     return JsonResponse({'detail': 'CSRF Failed: ' + str(reason)}, status=403)

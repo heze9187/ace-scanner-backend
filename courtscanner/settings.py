@@ -140,8 +140,8 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_COOKIE_HTTPONLY = False  # <--- very important!
-SESSION_COOKIE_HTTPONLY = False  # <--- also helps
+# CSRF_COOKIE_HTTPONLY = False  # <--- very important!
+# SESSION_COOKIE_HTTPONLY = False  # <--- also helps
 
 if ENVIRONMENT == 'production':
     CORS_ALLOWED_ORIGINS = [
@@ -158,11 +158,11 @@ else:
         "http://localhost:3000",
     ]
 
-CSRF_COOKIE_NAME = "csrftoken"  # <--- align explicitly with axios
-CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"  # <--- align explicitly with axios sending "X-CSRFToken"
+# CSRF_COOKIE_NAME = "csrftoken"  # <--- align explicitly with axios
+# CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"  # <--- align explicitly with axios sending "X-CSRFToken"
 
-# Optional but helps debugging:
-CSRF_FAILURE_VIEW = 'scanner.views.csrf_failure'
+# # Optional but helps debugging:
+# CSRF_FAILURE_VIEW = 'scanner.views.csrf_failure'
 
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
