@@ -140,6 +140,9 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_COOKIE_HTTPONLY = False  # <--- very important!
+SESSION_COOKIE_HTTPONLY = False  # <--- also helps
+
 if ENVIRONMENT == 'production':
     CORS_ALLOWED_ORIGINS = [
         "https://ace-scanner-frontend.onrender.com",
