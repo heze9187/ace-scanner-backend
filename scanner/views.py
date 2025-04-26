@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.core.management import call_command
 from django.http import JsonResponse
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.middleware.csrf import get_token
 import json
 
 @api_view(['GET'])
@@ -84,6 +84,14 @@ def api_logout(request):
         return JsonResponse({'message': 'Logout success'})
     return JsonResponse({'message': 'Method not allowed'}, status=405)
 
-@ensure_csrf_cookie
 def get_csrf_token(request):
-    return JsonResponse({'message': 'CSRF cookie set'})
+    csrf_token = get_token(request)
+    response = JsonResponse({'message': 'CSRF cookie set'})
+    response.set_cookie(
+        'csrftoken',
+        csrf_token,
+        secure=True,          # Important for production
+        httponly=False,        # Allow JS to read it
+        samesite='None',       # Allow cross-site requests
+    )
+    return response
