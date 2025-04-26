@@ -1,0 +1,89 @@
+# scanner/views.py
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import api_view, action
+from rest_framework.response import Response
+from .models import User, Court, UserPreference, CourtAvailability
+from .serializer import CourtSerializer, UserPreferenceSerializer, CourtAvailabilitySerializer
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login, logout
+from django.core.management import call_command
+from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
+import json
+
+@api_view(['GET'])
+def whoami(request):
+    if request.user.is_authenticated:
+        return Response({'is_authenticated': True, 'username': request.user.username})
+    else:
+        return Response({'is_authenticated': False})
+
+class SignupViewSet(viewsets.ViewSet):
+    permission_classes = []  # Signup open to everyone (no auth needed)
+
+    def create(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return Response({'message': 'Username and password required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if User.objects.filter(username=username).exists():
+            return Response({'message': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        User.objects.create_user(username=username, password=password)
+        return Response({'message': 'User created successfully.'})
+    
+class CourtViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Court.objects.all()
+    serializer_class = CourtSerializer
+    permission_classes = [permissions.AllowAny]  # Publicly viewable courts
+
+class UserPreferenceViewSet(viewsets.ModelViewSet):
+    serializer_class = UserPreferenceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return UserPreference.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class CourtAvailabilityViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = CourtAvailability.objects.all().order_by('date', 'time')
+    serializer_class = CourtAvailabilitySerializer
+    permission_classes = [permissions.AllowAny]
+
+class ScrapeAvailabilityViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request):
+        call_command('scrape_availability')
+        return Response({'message': 'Scraping started successfully'})
+
+@csrf_exempt
+def api_login(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            return JsonResponse({'message': 'Login success'})
+        else:
+            return JsonResponse({'message': 'Invalid credentials'}, status=400)
+    return JsonResponse({'message': 'Method not allowed'}, status=405)
+
+
+@csrf_exempt
+def api_logout(request):
+    if request.method == 'POST':
+        logout(request)
+        return JsonResponse({'message': 'Logout success'})
+    return JsonResponse({'message': 'Method not allowed'}, status=405)
+
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return JsonResponse({'message': 'CSRF cookie set'})
