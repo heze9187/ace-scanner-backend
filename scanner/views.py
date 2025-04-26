@@ -77,7 +77,7 @@ def get_csrf_token(request):
 
     # If production, set domain
     if settings.ENVIRONMENT == 'production':
-        cookie_settings['domain'] = '.onrender.com'  # 🔥 Only add domain in production
+        cookie_settings['domain'] = 'ace-scanner-frontend.onrender.com'  # 🔥 Only add domain in production
 
     response.set_cookie(**cookie_settings)
     return response
