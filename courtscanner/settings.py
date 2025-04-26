@@ -159,6 +159,8 @@ else:
         "http://localhost:3000",
     ]
 
+CSRF_COOKIE_NAME = "csrftoken"
+
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True
