@@ -159,7 +159,11 @@ else:
         "http://localhost:3000",
     ]
 
-CSRF_COOKIE_NAME = "csrftoken"
+CSRF_COOKIE_NAME = "csrftoken"  # <--- align explicitly with axios
+CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"  # <--- align explicitly with axios sending "X-CSRFToken"
+
+# Optional but helps debugging:
+CSRF_FAILURE_VIEW = 'scanner.views.csrf_failure'
 
 SESSION_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SAMESITE = 'None'

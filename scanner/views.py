@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.management import call_command
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
+from django.middleware.csrf import CsrfViewMiddleware
 import json
 
 @api_view(['GET'])
@@ -95,3 +96,6 @@ def get_csrf_token(request):
         samesite='None',       # Allow cross-site requests
     )
     return response
+
+def csrf_failure(request, reason=""):
+    return JsonResponse({'detail': 'CSRF Failed: ' + str(reason)}, status=403)
