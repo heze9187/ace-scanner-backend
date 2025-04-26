@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from .models import User, Court, UserPreference, CourtAvailability
 from .serializer import CourtSerializer, UserPreferenceSerializer, CourtAvailabilitySerializer
+from django.conf import settings
 
 # --- Authentication Helpers ---
 
@@ -60,17 +61,25 @@ def api_logout(request):
     logout(request)
     return JsonResponse({'message': 'Logout success'})
 
+
 def get_csrf_token(request):
-    csrf_token = get_token(request)  # <-- generate a fresh CSRF token
+    csrf_token = get_token(request)
     response = JsonResponse({'message': 'CSRF cookie set'})
-    response.set_cookie(
-        key='csrftoken',
-        value=csrf_token,
-        secure=True,         # True in production (https)
-        httponly=False,       # IMPORTANT! Allow frontend JS to read it
-        samesite='None',      # IMPORTANT! Allow cross-site if frontend is on different domain
-        path='/',
-    )
+
+    cookie_settings = {
+        'key': 'csrftoken',
+        'value': csrf_token,
+        'secure': True,
+        'httponly': False,
+        'samesite': 'None',
+        'path': '/',
+    }
+
+    # If production, set domain
+    if settings.ENVIRONMENT == 'production':
+        cookie_settings['domain'] = '.onrender.com'  # 🔥 Only add domain in production
+
+    response.set_cookie(**cookie_settings)
     return response
 
 def csrf_failure(request, reason=""):
