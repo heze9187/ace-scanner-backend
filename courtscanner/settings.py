@@ -32,6 +32,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
     'ace-scanner.com',
     'www.ace-scanner.com',
+    'ace-scanner-backend.onrender.com',
     'localhost',
     '127.0.0.1',
 ]
