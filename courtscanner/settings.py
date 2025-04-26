@@ -143,9 +143,13 @@ CORS_ALLOW_CREDENTIALS = True
 if ENVIRONMENT == 'production':
     CORS_ALLOWED_ORIGINS = [
         "https://ace-scanner.com",
+        "https://www.ace-scanner.com",
+        "https://ace-scanner-frontend.onrender.com",
     ]
     CSRF_TRUSTED_ORIGINS = [
         "https://ace-scanner.com",
+        "https://www.ace-scanner.com",
+        "https://ace-scanner-frontend.onrender.com",
     ]
 else:
     CORS_ALLOWED_ORIGINS = [
