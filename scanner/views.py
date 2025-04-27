@@ -70,7 +70,7 @@ def get_csrf_token(request):
         'key': 'csrftoken',
         'value': csrf_token,
         'secure': True,
-        'httponly': True,
+        'httponly': False,
         'sameSite': 'None',
         'path': '/',
     }
