@@ -32,7 +32,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
     'ace-scanner.com',
     'www.ace-scanner.com',
-    'ace-scanner-backend.onrender.com',
+    'api.ace-scanner.com',
     'localhost',
     '127.0.0.1',
 ]
@@ -144,11 +144,15 @@ CORS_ALLOW_CREDENTIALS = True
 # SESSION_COOKIE_HTTPONLY = False  # <--- also helps
 
 if ENVIRONMENT == 'production':
-    CORS_ALLOWED_ORIGINS = [
-        "https://ace-scanner-frontend.onrender.com",
-    ]
     CSRF_TRUSTED_ORIGINS = [
-        "https://ace-scanner-frontend.onrender.com",
+        'https://ace-scanner.com',
+        'https://www.ace-scanner.com',
+        'https://api.ace-scanner.com',
+    ]
+
+    CORS_ALLOWED_ORIGINS = [
+        'https://ace-scanner.com',
+        'https://www.ace-scanner.com',
     ]
 else:
     CORS_ALLOWED_ORIGINS = [
