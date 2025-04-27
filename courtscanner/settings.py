@@ -147,7 +147,6 @@ if ENVIRONMENT == 'production':
     CSRF_TRUSTED_ORIGINS = [
         'https://ace-scanner.com',
         'https://www.ace-scanner.com',
-        'https://api.ace-scanner.com',
     ]
 
     CORS_ALLOWED_ORIGINS = [
@@ -161,6 +160,19 @@ else:
     CSRF_TRUSTED_ORIGINS = [
         "http://localhost:3000",
     ]
+
+# VERY IMPORTANT:
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',  # << add this
+    'x-requested-with',
+]
 
 # CSRF_COOKIE_NAME = "csrftoken"  # <--- align explicitly with axios
 # CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"  # <--- align explicitly with axios sending "X-CSRFToken"
